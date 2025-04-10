@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://c8ukbdxj3wlt4"]
+
+[ext_resource type="Script" uid="uid://cl0c764y8cyhx" path="res://scripts/cell_map_chunk.gd" id="1_cvcf2"]
+
+[node name="CellMapChunk" type="Node2D"]
+script = ExtResource("1_cvcf2")

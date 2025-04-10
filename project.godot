@@ -11,8 +11,14 @@ config_version=5
 [application]
 
 config/name="godot_cuadrados"
+run/main_scene="uid://cuvj1jrywrkhl"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+Globals="*res://scripts/globals.gd"
+WorldGeneration="*res://scripts/world_generation.gd"
 
 [display]
 

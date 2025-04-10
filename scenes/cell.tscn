@@ -1,0 +1,64 @@
+[gd_scene load_steps=4 format=3 uid="uid://3jstfsmyqhc5"]
+
+[ext_resource type="Texture2D" uid="uid://ll8f54gg2hlj" path="res://assets/tiles.png" id="1_3dk36"]
+[ext_resource type="Script" uid="uid://ci6g1uj6mpq5l" path="res://scripts/cell.gd" id="1_ywnoi"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3dk36"]
+size = Vector2(32, 32)
+
+[node name="Cell" type="Node2D"]
+script = ExtResource("1_ywnoi")
+
+[node name="Texture" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+texture = ExtResource("1_3dk36")
+centered = false
+region_enabled = true
+region_rect = Rect2(0, 0, 32, 32)
+
+[node name="Borders" type="Node2D" parent="."]
+
+[node name="BorderUp" type="ColorRect" parent="Borders"]
+unique_name_in_owner = true
+offset_right = 32.0
+offset_bottom = 2.0
+color = Color(0, 0, 0, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="BorderDown" type="ColorRect" parent="Borders"]
+unique_name_in_owner = true
+offset_top = 30.0
+offset_right = 32.0
+offset_bottom = 32.0
+color = Color(0, 0, 0, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="BorderLeft" type="ColorRect" parent="Borders"]
+unique_name_in_owner = true
+offset_right = 2.0
+offset_bottom = 32.0
+color = Color(0, 0, 0, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="BorderRight" type="ColorRect" parent="Borders"]
+unique_name_in_owner = true
+offset_left = 30.0
+offset_right = 32.0
+offset_bottom = 32.0
+color = Color(0, 0, 0, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="Overlay" type="ColorRect" parent="."]
+unique_name_in_owner = true
+offset_right = 32.0
+offset_bottom = 32.0
+color = Color(1, 1, 1, 0)
+metadata/_edit_use_anchors_ = true
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+unique_name_in_owner = true
+position = Vector2(16, 16)
+shape = SubResource("RectangleShape2D_3dk36")
+disabled = true
