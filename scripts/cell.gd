@@ -28,5 +28,5 @@ func set_borders(up:bool,down:bool,left:bool,right:bool):
 func set_overlay(color:Color):
 	%Overlay.color=color
 
-func set_collision(collide:bool):
-	%CollisionShape2D.set_deferred("disabled",not collide)
+func set_collision(collision_mask:int):
+	%StaticBody2D.collision_mask=collision_mask

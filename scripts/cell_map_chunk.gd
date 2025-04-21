@@ -21,7 +21,7 @@ class CellData extends RefCounted:
 			if value!=overlay_color:
 				overlay_color=value
 				changed=true
-	var collision:=false:
+	var collision:=0:
 		set(value):
 			if value!=collision:
 				collision=value
@@ -74,13 +74,24 @@ static func calculate_overlay_color(relative_height:int)->Color:
 	else:
 		return Color(1,1,1,overlay_color_function(-relative_height))
 
+static func calculate_collision_mask(height:int)->int:
+	var mask:=0
+	if height<32:
+		mask|=(1<<height)
+	if height>0:
+		mask|=(1<<(height-1))
+	if height<31:
+		mask|=(1<<(height+1))
+	mask=~mask
+	return mask
+
 func update(player_height:int,chunk:Chunk,chunk_up:Chunk,chunk_down:Chunk,chunk_left:Chunk,chunk_right:Chunk):
 	for y in range(SIZE):
 		for x in range(SIZE):
 			var cell:=cell_at(x,y)
 			var column=chunk.column_at(x,y)
 			var height=column.get_height()
-			cell.collision= abs(height-player_height)>1
+			cell.collision= calculate_collision_mask(height)
 			cell.texture_index=column.get_top_block().type_index
 			cell.overlay_color=calculate_overlay_color(height-player_height)
 			

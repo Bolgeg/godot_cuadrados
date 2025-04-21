@@ -1,8 +1,8 @@
 class_name Chunk
 extends RefCounted
 
-const SIZE:=64
-const MAX_HEIGHT:=64
+const SIZE:=4
+const MAX_HEIGHT:=32
 
 var location:=Vector2i(0,0)
 var block_columns:=[]
