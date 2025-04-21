@@ -2,8 +2,13 @@ extends Node2D
 
 const CAMERA_RECT_MAX_OFFSET_OUTSIDE:=50
 
+const BLOCK_OUTLINE_MAX_DISTANCE:=5.0
+
 var world_seed:=0
 var chunks:={}
+
+var block_outline_active:=false
+var block_outline_location:=Vector2i(0,0)
 
 func create_chunk(location:Vector2i):
 	if not chunks.has(location):
@@ -74,17 +79,60 @@ func get_altitude_at(cell_location:Vector2i)->int:
 		return column.get_height()
 	return Chunk.MAX_HEIGHT
 
-func _ready() -> void:
-	update_chunk_loading()
-	
+func initialize_player():
 	const INITIAL_POSITION=Vector2i(0,0)
 	%Player.global_position=(Vector2(INITIAL_POSITION)+Vector2(0.5,0.5)
 		)*Cell.SIZE-Vector2(%Player.SIZE,%Player.SIZE)/2
 	%Player.set_position_z(get_altitude_at(INITIAL_POSITION))
 
-func _process(_delta: float) -> void:
+func get_cell_location_from_screen_position(screen_position:Vector2i)->Vector2i:
+	var position_absolute=get_camera_rect().position+screen_position
+	return get_cell_location(position_absolute)
+
+func update_block_outline(delta:float):
+	var cell_location=get_cell_location_from_screen_position(get_viewport().get_mouse_position())
+	if (cell_location-get_cell_location(%Player.global_position.floor())).length()<=BLOCK_OUTLINE_MAX_DISTANCE:
+		block_outline_active=true
+		block_outline_location=cell_location
+	else:
+		block_outline_active=false
+	
+	if block_outline_active:
+		%BlockOutline.visible=true
+		%BlockOutline.global_position=block_outline_location*Cell.SIZE
+	else:
+		%BlockOutline.visible=false
+	
+	if block_outline_active:
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			try_to_break_block_progress(block_outline_location,delta)
+		else:
+			try_to_break_block_stop()
+			if Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
+				try_to_put_block_progress(block_outline_location,delta)
+			else:
+				try_to_put_block_stop()
+
+func try_to_break_block_progress(location:Vector2i,delta:float):
+	pass
+
+func try_to_break_block_stop():
+	pass
+
+func try_to_put_block_progress(location:Vector2i,delta:float):
+	pass
+
+func try_to_put_block_stop():
+	pass
+
+func _ready() -> void:
+	update_chunk_loading()
+	initialize_player()
+
+func _process(delta: float) -> void:
 	%Camera2D.global_position=%Player.global_position.floor()
 	update_chunk_loading()
+	update_block_outline(delta)
 
 func _physics_process(_delta: float) -> void:
 	var cell_position=get_cell_location(Vector2i(%Player.global_position.floor()))

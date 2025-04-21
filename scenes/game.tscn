@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://cuvj1jrywrkhl"]
+[gd_scene load_steps=5 format=3 uid="uid://cuvj1jrywrkhl"]
 
 [ext_resource type="PackedScene" uid="uid://lfiqlv7agypd" path="res://scenes/cell_map.tscn" id="1_uwrxv"]
 [ext_resource type="Script" uid="uid://c0c5fa74uem5x" path="res://scripts/game.gd" id="1_yqjtg"]
+[ext_resource type="PackedScene" uid="uid://bboq6xseywab5" path="res://scenes/block_outline.tscn" id="2_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://8hieda2qpbo" path="res://scenes/player.tscn" id="3_lnu2h"]
 
 [node name="Game" type="Node2D"]
@@ -10,8 +11,11 @@ script = ExtResource("1_yqjtg")
 [node name="CellMap" parent="." instance=ExtResource("1_uwrxv")]
 unique_name_in_owner = true
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="BlockOutline" parent="." instance=ExtResource("2_lbhrr")]
 unique_name_in_owner = true
 
 [node name="Player" parent="." instance=ExtResource("3_lnu2h")]
+unique_name_in_owner = true
+
+[node name="Camera2D" type="Camera2D" parent="."]
 unique_name_in_owner = true
