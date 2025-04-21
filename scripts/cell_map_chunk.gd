@@ -95,6 +95,7 @@ func update(player_height:int,chunk:Chunk,chunk_up:Chunk,chunk_down:Chunk,chunk_
 			cell.texture_index=column.get_top_block().type_index
 			cell.overlay_color=calculate_overlay_color(height-player_height)
 			
+			var borders=[false,false,false,false]
 			for side in [
 				{
 					"index":0,
@@ -127,6 +128,7 @@ func update(player_height:int,chunk:Chunk,chunk_up:Chunk,chunk_down:Chunk,chunk_
 			]:
 				var c= chunk if side.condition else side.chunk
 				if c==null:
-					cell.borders[side.index]=true
+					borders[side.index]=true
 				else:
-					cell.borders[side.index]= c.column_at(x+side.rx,y+side.ry).get_height()<height
+					borders[side.index]= c.column_at(x+side.rx,y+side.ry).get_height()>height
+			cell.borders=borders

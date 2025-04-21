@@ -13,7 +13,7 @@ func generate_chunk(chunk:Chunk,world_seed:int):
 			var column:=chunk.column_at(x,y)
 			var world_x:int=chunk.location.x*Chunk.SIZE+x
 			var world_y:int=chunk.location.y*Chunk.SIZE+y
-			var height:int=32+int(round(8*height_noise.get_noise_2d(world_x*4,world_y*4)))
+			var height:int=16+int(round(16*height_noise.get_noise_2d(world_x*4,world_y*4)))
 			if height<1:
 				height=1
 			elif height>BlockColumn.MAX_HEIGHT:

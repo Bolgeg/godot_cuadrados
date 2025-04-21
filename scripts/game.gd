@@ -1,6 +1,6 @@
 extends Node2D
 
-const CAMERA_RECT_MAX_OFFSET_OUTSIDE:=100
+const CAMERA_RECT_MAX_OFFSET_OUTSIDE:=50
 
 var world_seed:=0
 var chunks:={}
@@ -49,10 +49,43 @@ func update_chunk_loading():
 				c.append(chunks[loc])
 			else:
 				c.append(null)
-		%CellMap.update_chunk(32,chunks[location],c[0],c[1],c[2],c[3])
+		%CellMap.update_chunk(%Player.position_z,chunks[location],c[0],c[1],c[2],c[3])
+
+static func get_sized_structure_location(unit_location:Vector2i,size:int)->Vector2i:
+	var loc=unit_location/size
+	if loc.x*size>unit_location.x:
+		loc.x-=1
+	if loc.y*size>unit_location.y:
+		loc.y-=1
+	return loc
+
+static func get_cell_location(pixel:Vector2i)->Vector2i:
+	return get_sized_structure_location(pixel,Cell.SIZE)
+
+static func get_chunk_location(cell_location:Vector2i)->Vector2i:
+	return get_sized_structure_location(cell_location,Chunk.SIZE)
+
+func get_altitude_at(cell_location:Vector2i)->int:
+	var chunk_location:=get_chunk_location(cell_location)
+	if chunks.has(chunk_location):
+		var chunk:Chunk=chunks[chunk_location]
+		var cell_location_in_chunk=cell_location-chunk_location*Chunk.SIZE
+		var column:=chunk.column_at(cell_location_in_chunk.x,cell_location_in_chunk.y)
+		return column.get_height()
+	return Chunk.MAX_HEIGHT
 
 func _ready() -> void:
 	update_chunk_loading()
+	
+	const INITIAL_POSITION=Vector2i(0,0)
+	%Player.global_position=(Vector2(INITIAL_POSITION)+Vector2(0.5,0.5)
+		)*Cell.SIZE-Vector2(%Player.SIZE,%Player.SIZE)/2
+	%Player.set_position_z(get_altitude_at(INITIAL_POSITION))
 
 func _process(_delta: float) -> void:
+	%Camera2D.global_position=%Player.global_position.floor()
 	update_chunk_loading()
+
+func _physics_process(_delta: float) -> void:
+	var cell_position=get_cell_location(Vector2i(%Player.global_position.floor()))
+	%Player.set_position_z(get_altitude_at(cell_position))
