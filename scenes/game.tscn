@@ -1,10 +1,18 @@
-[gd_scene load_steps=6 format=3 uid="uid://cuvj1jrywrkhl"]
+[gd_scene load_steps=8 format=3 uid="uid://cuvj1jrywrkhl"]
 
 [ext_resource type="PackedScene" uid="uid://lfiqlv7agypd" path="res://scenes/cell_map.tscn" id="1_uwrxv"]
 [ext_resource type="Script" uid="uid://c0c5fa74uem5x" path="res://scripts/game.gd" id="1_yqjtg"]
 [ext_resource type="PackedScene" uid="uid://bboq6xseywab5" path="res://scenes/block_outline.tscn" id="2_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://dgxnhh15ihwsg" path="res://scenes/breaking_block_overlay.tscn" id="3_iywne"]
 [ext_resource type="PackedScene" uid="uid://8hieda2qpbo" path="res://scenes/player.tscn" id="3_lnu2h"]
+[ext_resource type="Script" uid="uid://by6roddomqk88" path="res://scripts/toolbar.gd" id="6_p57ef"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iywne"]
+bg_color = Color(0.6, 0.6, 0.6, 0.501961)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_yqjtg")
@@ -23,3 +31,43 @@ unique_name_in_owner = true
 
 [node name="Camera2D" type="Camera2D" parent="."]
 unique_name_in_owner = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Toolbar" type="Control" parent="CanvasLayer"]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -70.0
+offset_right = 200.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+pivot_offset = Vector2(200, 70)
+script = ExtResource("6_p57ef")
+
+[node name="Panel" type="Panel" parent="CanvasLayer/Toolbar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_iywne")
+
+[node name="ToolbarGridContainer" type="GridContainer" parent="CanvasLayer/Toolbar/Panel"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+columns = 9

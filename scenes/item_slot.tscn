@@ -1,0 +1,71 @@
+[gd_scene load_steps=4 format=3 uid="uid://bi05ox1w0hedq"]
+
+[ext_resource type="Script" uid="uid://fv6cixqxtnd8" path="res://scripts/item_slot.gd" id="1_567tv"]
+[ext_resource type="PackedScene" uid="uid://cpsdjwucf4nut" path="res://scenes/item_scene.tscn" id="2_eqbkm"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qwnti"]
+bg_color = Color(0.501961, 0.501961, 0.501961, 0.752941)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="ItemSlot" type="Control"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_567tv")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_qwnti")
+
+[node name="ItemScene" parent="." instance=ExtResource("2_eqbkm")]
+unique_name_in_owner = true
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 44.0
+offset_bottom = 44.0
+
+[node name="ToolbarOutline" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="ToolbarOutline"]
+layout_mode = 0
+offset_left = -2.0
+offset_top = -2.0
+offset_right = 42.0
+offset_bottom = 2.0
+
+[node name="ColorRect2" type="ColorRect" parent="ToolbarOutline"]
+layout_mode = 0
+offset_left = -2.0
+offset_top = 38.0
+offset_right = 42.0
+offset_bottom = 42.0
+
+[node name="ColorRect3" type="ColorRect" parent="ToolbarOutline"]
+layout_mode = 0
+offset_left = -2.0
+offset_top = -2.0
+offset_right = 2.0
+offset_bottom = 42.0
+
+[node name="ColorRect4" type="ColorRect" parent="ToolbarOutline"]
+layout_mode = 0
+offset_left = 38.0
+offset_top = -2.0
+offset_right = 42.0
+offset_bottom = 42.0

@@ -14,3 +14,6 @@ func set_type(type_name:String):
 
 func get_time_to_break()->float:
 	return Globals.block_types[type_index].time_to_break
+
+func get_item()->Item:
+	return Item.new(type_index,1)
