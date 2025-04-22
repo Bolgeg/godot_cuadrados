@@ -4,11 +4,19 @@ const CAMERA_RECT_MAX_OFFSET_OUTSIDE:=50
 
 const BLOCK_OUTLINE_MAX_DISTANCE:=5.0
 
+const TIME_TO_PUT_BLOCK:=1
+
 var world_seed:=0
 var chunks:={}
 
 var block_outline_active:=false
 var block_outline_location:=Vector2i(0,0)
+
+var breaking_block_time:=0.0
+var breaking_block_position:=Vector2i(0,0)
+
+var putting_block_time:=0.0
+var putting_block_position:=Vector2i(0,0)
 
 func create_chunk(location:Vector2i):
 	if not chunks.has(location):
@@ -70,12 +78,17 @@ static func get_cell_location(pixel:Vector2i)->Vector2i:
 static func get_chunk_location(cell_location:Vector2i)->Vector2i:
 	return get_sized_structure_location(cell_location,Chunk.SIZE)
 
-func get_altitude_at(cell_location:Vector2i)->int:
+func get_block_column_at(cell_location:Vector2i)->BlockColumn:
 	var chunk_location:=get_chunk_location(cell_location)
 	if chunks.has(chunk_location):
 		var chunk:Chunk=chunks[chunk_location]
 		var cell_location_in_chunk=cell_location-chunk_location*Chunk.SIZE
-		var column:=chunk.column_at(cell_location_in_chunk.x,cell_location_in_chunk.y)
+		return chunk.column_at(cell_location_in_chunk.x,cell_location_in_chunk.y)
+	return null
+
+func get_altitude_at(cell_location:Vector2i)->int:
+	var column:=get_block_column_at(cell_location)
+	if column!=null:
 		return column.get_height()
 	return Chunk.MAX_HEIGHT
 
@@ -112,18 +125,109 @@ func update_block_outline(delta:float):
 				try_to_put_block_progress(block_outline_location,delta)
 			else:
 				try_to_put_block_stop()
+	else:
+		try_to_break_block_stop()
+		try_to_put_block_stop()
 
-func try_to_break_block_progress(location:Vector2i,delta:float):
-	pass
+func update_breaking_block_overlay():
+	if breaking_block_time==0:
+		%BreakingBlockOverlay.visible=false
+	else:
+		%BreakingBlockOverlay.visible=true
+		%BreakingBlockOverlay.global_position=breaking_block_position*Cell.SIZE
+		var breaking_block_progress:=0.0
+		var time_to_break_block=get_time_to_break_block(breaking_block_position)
+		if time_to_break_block!=0:
+			breaking_block_progress=breaking_block_time/time_to_break_block
+		%BreakingBlockOverlay.update_state(breaking_block_progress)
+
+func try_to_break_block_progress(cell_location:Vector2i,delta:float):
+	if breaking_block_time==0:
+		if is_cell_block_breakable(cell_location):
+			breaking_block_position=cell_location
+			breaking_block_time+=delta
+	else:
+		if cell_location!=breaking_block_position:
+			breaking_block_time=0
+			breaking_block_position=cell_location
+		else:
+			breaking_block_time+=delta
+			var time_to_break=get_time_to_break_block(breaking_block_position)
+			if breaking_block_time>=time_to_break:
+				break_block(breaking_block_position)
+				breaking_block_time=0
 
 func try_to_break_block_stop():
-	pass
+	breaking_block_time=0
 
-func try_to_put_block_progress(location:Vector2i,delta:float):
-	pass
+func try_to_put_block_progress(cell_location:Vector2i,delta:float):
+	if putting_block_time==0:
+		if is_cell_block_puttable(cell_location):
+			putting_block_position=cell_location
+			putting_block_time=delta
+			put_block(putting_block_position)
+	else:
+		if cell_location!=putting_block_position:
+			putting_block_position=cell_location
+			putting_block_time=delta
+			if is_cell_block_puttable(putting_block_position):
+				put_block(putting_block_position)
+		else:
+			putting_block_time+=delta
+			var time_to_put=TIME_TO_PUT_BLOCK
+			if putting_block_time>=time_to_put:
+				if is_cell_block_puttable(putting_block_position):
+					put_block(putting_block_position)
+				putting_block_time=0
 
 func try_to_put_block_stop():
+	putting_block_time=0
+
+func is_cell_block_breakable(cell_location:Vector2i)->bool:
+	var column:=get_block_column_at(cell_location)
+	if column==null:
+		return false
+	else:
+		return column.get_height()>1
+
+func get_time_to_break_block(cell_location:Vector2i)->float:
+	var time:=1.0
+	var column:=get_block_column_at(cell_location)
+	if column!=null:
+		time=column.get_top_block().get_time_to_break()
+	var speed:=get_current_tool_speed()
+	assert(speed!=0,"Current tool speed is zero")
+	return time/speed
+
+func break_block(cell_location:Vector2i):
+	var column:=get_block_column_at(cell_location)
+	if column==null:
+		return
+	var block:=column.get_top_block()
+	column.remove_block()
+	player_get_block(block)
+
+func is_cell_block_puttable(cell_location:Vector2i)->bool:
+	var column:=get_block_column_at(cell_location)
+	if column==null:
+		return false
+	else:
+		return column.get_height()<Chunk.MAX_HEIGHT
+
+func put_block(cell_location:Vector2i):
+	var column:=get_block_column_at(cell_location)
+	if column==null:
+		return
+	column.put_block(player_put_block())
+
+func player_get_block(block:Block):
 	pass
+
+func player_put_block()->Block:
+	return Block.create("stone")
+
+func get_current_tool_speed()->float:
+	return 1
 
 func _ready() -> void:
 	update_chunk_loading()
@@ -133,6 +237,7 @@ func _process(delta: float) -> void:
 	%Camera2D.global_position=%Player.global_position.floor()
 	update_chunk_loading()
 	update_block_outline(delta)
+	update_breaking_block_overlay()
 
 func _physics_process(_delta: float) -> void:
 	var cell_position=get_cell_location(Vector2i(%Player.global_position.floor()))
