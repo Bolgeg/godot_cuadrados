@@ -7,6 +7,14 @@ func _ready() -> void:
 	add_block_type("grass",1)
 	add_block_type("dirt",1)
 	add_block_type("stone",10)
+	add_block_type("leaves",1)
+	add_block_type("log",1)
+	add_block_type("copper_ore",10)
+	add_block_type("hard_stone",100)
+	add_block_type("tin_ore",10)
+	add_block_type("iron_ore",100)
+	add_block_type("wood",1)
+	add_block_type("stone_bricks",10)
 
 func get_base_block_type_name()->String:
 	return "stone"
