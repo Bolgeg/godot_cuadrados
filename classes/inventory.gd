@@ -48,3 +48,44 @@ func remove_item(index:int,quantity:int=1)->Item:
 	if items[index].quantity==0:
 		items[index]=Item.create_empty()
 	return itemToReturn
+
+func has_ingredient(ingredient:Item)->bool:
+	if ingredient.is_empty():
+		return true
+	var count:=0
+	for item:Item in items:
+		if item.type_index==ingredient.type_index:
+			count+=item.quantity
+			if count>=ingredient.quantity:
+				return true
+	return false
+
+func subtract_ingredient(ingredient:Item):
+	if ingredient.is_empty():
+		return
+	var to_subtract:=ingredient.quantity
+	for index in range(items.size()-1,-1,-1):
+		var item:Item=items[index]
+		if item.type_index==ingredient.type_index:
+			if item.quantity>to_subtract:
+				item.subtract_quantity(to_subtract)
+				to_subtract=0
+				return
+			else:
+				to_subtract-=item.quantity
+				item.clear()
+				if to_subtract==0:
+					return
+
+func is_craftable(recipe:CraftingRecipe)->bool:
+	for ingredient in recipe.ingredients:
+		if not has_ingredient(ingredient):
+			return false
+	return true
+
+func craft(recipe:CraftingRecipe)->Item:
+	if not is_craftable(recipe):
+		return Item.create_empty()
+	for ingredient in recipe.ingredients:
+		subtract_ingredient(ingredient)
+	return recipe.result.duplicate()

@@ -21,7 +21,7 @@ func update_visualization():
 			index=item.type_index
 		else:
 			%Texture.texture.atlas=preload("res://assets/items.png")
-			index=Globals.block_types.size()+item.type_index
+			index=item.type_index-Globals.block_types.size()
 		var tex_x:int=%Texture.texture.atlas.get_size().x/Cell.SIZE
 		@warning_ignore("integer_division")
 		var offset=Vector2i(index%tex_x,index/tex_x)*Cell.SIZE

@@ -25,6 +25,16 @@ func swap(item:Item):
 	item.type_index=type_index_copy
 	item.quantity=quantity_copy
 
+func clear():
+	type_index=0
+	quantity=0
+
+func add_quantity(quantity_to_add:int):
+	quantity+=quantity_to_add
+
+func subtract_quantity(quantity_to_subtract:int):
+	quantity-=quantity_to_subtract
+
 func is_empty()->bool:
 	return quantity==0
 

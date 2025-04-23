@@ -57,7 +57,6 @@ func get_stone_depth_block(x:int,y:int,z:int)->String:
 func get_hard_stone_depth_block(x:int,y:int,z:int)->String:
 	if not get_ore_presence_at(x,y,z):
 		return "hard_stone"
-	var type_value=get_ore_type_value_at(x,y,z)
 	return "iron_ore"
 
 func generate_chunk(chunk:Chunk,world_seed:int):

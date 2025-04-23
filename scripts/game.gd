@@ -8,7 +8,7 @@ const TIME_TO_PUT_BLOCK:=1
 
 var world_seed:=0
 var chunks:={}
-var inventory:Inventory=Inventory.new()
+var inventory:=Inventory.new()
 
 var inventory_mouse_item:=Item.create_empty()
 
@@ -270,4 +270,17 @@ func _input(_event: InputEvent) -> void:
 
 func _on_inventory_container_mouse_clicked_to_move_item(item_index: int) -> void:
 	var item:Item=inventory.items[item_index]
-	item.swap(inventory_mouse_item)
+	if(not inventory_mouse_item.is_empty() and not item.is_empty()
+		and inventory_mouse_item.type_index==item.type_index):
+		item.add_quantity(inventory_mouse_item.quantity)
+		inventory_mouse_item.clear()
+	else:
+		item.swap(inventory_mouse_item)
+
+func _on_inventory_container_mouse_clicked_to_get_recipe_result(recipe_index: int) -> void:
+	var recipe:CraftingRecipe=Globals.crafting_recipes[recipe_index]
+	if inventory.is_craftable(recipe):
+		if inventory_mouse_item.is_empty():
+			inventory_mouse_item=inventory.craft(recipe)
+		elif inventory_mouse_item.type_index==recipe.result.type_index:
+			inventory_mouse_item.add_quantity(inventory.craft(recipe).quantity)

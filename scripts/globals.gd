@@ -6,6 +6,8 @@ var block_types_dict:={}
 var item_types:=[]
 var item_types_dict:={}
 
+var crafting_recipes:=[]
+
 func _ready() -> void:
 	add_block_type("grass",1)
 	add_block_type("dirt",1)
@@ -27,6 +29,14 @@ func _ready() -> void:
 	add_tool_item_type("tin_pickaxe",10)
 	add_tool_item_type("bronze_pickaxe",40)
 	add_tool_item_type("iron_pickaxe",200)
+	
+	add_crafting_recipe(Item.create("wood",10),[Item.create("log",1)])
+	add_crafting_recipe(Item.create("bronze_ingot",2),[Item.create("copper_ore",1),Item.create("tin_ore",1)])
+	add_crafting_recipe(Item.create("wood_pickaxe",1),[Item.create("wood",5)])
+	add_crafting_recipe(Item.create("copper_pickaxe",1),[Item.create("copper_ore",4),Item.create("wood",1)])
+	add_crafting_recipe(Item.create("tin_pickaxe",1),[Item.create("tin_ore",4),Item.create("wood",1)])
+	add_crafting_recipe(Item.create("bronze_pickaxe",1),[Item.create("bronze_ingot",4),Item.create("wood",1)])
+	add_crafting_recipe(Item.create("iron_pickaxe",1),[Item.create("iron_ore",4),Item.create("wood",1)])
 
 func get_base_block_type_name()->String:
 	return "hard_stone"
@@ -58,3 +68,6 @@ func get_block_type(type_name:String):
 func get_item_type(type_name:String):
 	assert(item_types_dict.has(type_name),"Item type not found: "+type_name)
 	return item_types_dict[type_name]
+
+func add_crafting_recipe(result:Item,ingredients:Array):
+	crafting_recipes.append(CraftingRecipe.new(result,ingredients))
