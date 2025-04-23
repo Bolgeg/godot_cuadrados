@@ -8,6 +8,9 @@ const TIME_TO_PUT_BLOCK:=1
 
 var world_seed:=0
 var chunks:={}
+var inventory:Inventory=Inventory.new()
+
+var inventory_mouse_item:=Item.create_empty()
 
 var block_outline_active:=false
 var block_outline_location:=Vector2i(0,0)
@@ -108,6 +111,9 @@ func update_block_outline(delta:float):
 		block_outline_active=true
 		block_outline_location=cell_location
 	else:
+		block_outline_active=false
+	
+	if %InventoryContainer.visible:
 		block_outline_active=false
 	
 	if block_outline_active:
@@ -218,16 +224,20 @@ func put_block(cell_location:Vector2i):
 	var column:=get_block_column_at(cell_location)
 	if column==null:
 		return
-	column.put_block(player_put_block())
+	if player_can_put_block():
+		column.put_block(player_put_block())
 
 func player_get_block(block:Block):
-	pass
+	inventory.add_item(block.get_item())
+
+func player_can_put_block()->bool:
+	return inventory.item_is_block(%Toolbar.selected_item_index)
 
 func player_put_block()->Block:
-	return Block.create("stone")
+	return inventory.remove_item(%Toolbar.selected_item_index).get_block()
 
 func get_current_tool_speed()->float:
-	return 1
+	return inventory.get_item_tool_speed(%Toolbar.selected_item_index)
 
 func _ready() -> void:
 	update_chunk_loading()
@@ -238,7 +248,26 @@ func _process(delta: float) -> void:
 	update_chunk_loading()
 	update_block_outline(delta)
 	update_breaking_block_overlay()
+	%InventoryContainer.update_items(inventory)
+	%InventoryContainer.update_mouse_item(inventory_mouse_item)
+	%Toolbar.update_items(inventory)
 
 func _physics_process(_delta: float) -> void:
 	var cell_position=get_cell_location(Vector2i(%Player.global_position.floor()))
 	%Player.set_position_z(get_altitude_at(cell_position))
+	%Player.movable=not %InventoryContainer.visible
+
+
+func _input(_event: InputEvent) -> void:
+	if Input.is_action_just_pressed("open_inventory"):
+		if %InventoryContainer.visible:
+			if not inventory_mouse_item.is_empty():
+				inventory.add_item(inventory_mouse_item)
+				inventory_mouse_item=Item.create_empty()
+			%InventoryContainer.close()
+		else:
+			%InventoryContainer.open()
+
+func _on_inventory_container_mouse_clicked_to_move_item(item_index: int) -> void:
+	var item:Item=inventory.items[item_index]
+	item.swap(inventory_mouse_item)

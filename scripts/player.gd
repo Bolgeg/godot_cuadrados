@@ -4,6 +4,7 @@ const SIZE:=24
 const SPEED:=5
 
 var position_z:int=0
+var movable:=true
 
 func _init() -> void:
 	set_position_z(Chunk.MAX_HEIGHT)
@@ -19,8 +20,9 @@ func set_position_z(z:int):
 
 func _physics_process(_delta: float) -> void:
 	var movement:=Vector2(0,0)
-	movement.x=Input.get_axis("move_left","move_right")
-	movement.y=Input.get_axis("move_up","move_down")
+	if movable:
+		movement.x=Input.get_axis("move_left","move_right")
+		movement.y=Input.get_axis("move_up","move_down")
 	if movement.length()>1:
 		movement=movement.normalized()
 	if movement.length()>0:

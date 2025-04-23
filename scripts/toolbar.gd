@@ -4,14 +4,16 @@ var selected_item_index:=0
 
 func _ready() -> void:
 	var item_slot_scene=preload("res://scenes/item_slot.tscn")
+	%ToolbarGridContainer.columns=Inventory.COLUMNS
 	for i in range(%ToolbarGridContainer.columns):
 		%ToolbarGridContainer.add_child(item_slot_scene.instantiate())
-	set_items_as_empty()
 	set_selected_item(0)
 
-func set_items_as_empty():
-	for child in %ToolbarGridContainer.get_children():
-		child.set_item(null)
+func update_items(inventory:Inventory):
+	for index_in_container in range(%ToolbarGridContainer.get_child_count()):
+		var child=%ToolbarGridContainer.get_child(index_in_container)
+		var index_in_inventory=index_in_container
+		child.set_item(inventory.items[index_in_inventory])
 
 func set_selected_item(index:int):
 	var children:=%ToolbarGridContainer.get_children()
@@ -33,7 +35,8 @@ func _input(_event: InputEvent) -> void:
 		"item_8":7,
 		"item_9":8,
 	}
-	for action in ACTIONS:
-		if Input.is_action_just_pressed(action):
-			set_selected_item(ACTIONS[action])
-			break
+	if not %InventoryContainer.visible:
+		for action in ACTIONS:
+			if Input.is_action_just_pressed(action):
+				set_selected_item(ACTIONS[action])
+				break
