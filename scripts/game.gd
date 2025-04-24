@@ -240,6 +240,7 @@ func get_current_tool_speed()->float:
 	return inventory.get_item_tool_speed(%Toolbar.selected_item_index)
 
 func _ready() -> void:
+	world_seed=randi()
 	update_chunk_loading()
 	initialize_player()
 

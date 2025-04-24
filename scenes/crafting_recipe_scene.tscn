@@ -6,6 +6,7 @@
 [node name="CraftingRecipeScene" type="Control"]
 custom_minimum_size = Vector2(360, 40)
 layout_mode = 3
+anchors_preset = 0
 offset_right = 360.0
 offset_bottom = 40.0
 script = ExtResource("1_ti6cu")
